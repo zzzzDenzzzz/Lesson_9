@@ -1,12 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows.Forms;
 
 namespace Lesson_9
 {
     internal interface IRequest
     {
+        // есть
+        string Eat();
+        // гулять
+        string Walk();
+        // спать
+        string Sleep();
+        // лечить
+        string Treat();
+        // играть
+        string Play();
+        // умереть
+        void Kick();
+        // говорить
+        DialogResult Say(string message = "Привет! Давай поиграем?");
     }
 }
