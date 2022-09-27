@@ -18,5 +18,9 @@ namespace Lesson_9
         void Kick();
         // говорить
         DialogResult Say(string message = "Привет! Давай поиграем?");
+
+        void Show();
+
+        void TimeIsOver();
     }
 }

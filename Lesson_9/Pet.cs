@@ -9,15 +9,21 @@ namespace Lesson_9
     {
         int countCancel;
         public string Name { get; }
+        public int ProgramTime { get; }
         System.Timers.Timer aTimer;
         Random random;
         List<string> request;
+        string tmpRequest;
+        int consoleCursorTop;
 
-        public Pet(string name)
+        public Pet(string name, int time)
         {
             Name = name;
+            ProgramTime = time;
             countCancel = 0;
             random = new Random();
+            tmpRequest = string.Empty;
+            consoleCursorTop = 7;
             request = new List<string>()
             {
                 Eat(),
@@ -34,10 +40,7 @@ namespace Lesson_9
 
         public string Eat() => "Хочу есть. Покормишь меня?";
 
-        public void Kick()
-        {
-            Environment.Exit(0);
-        }
+        public void Kick() => Environment.Exit(0);
 
         public string Play() => "Хочу играть. Сыграем?";
 
@@ -47,6 +50,12 @@ namespace Lesson_9
 
         public string Walk() => "Хочу гулять. Пойдем?";
 
+        public void TimeIsOver()
+        {
+            Console.WriteLine("Время вышло");
+            Environment.Exit(0);
+        }
+
         void SetTimer()
         {
             aTimer = new System.Timers.Timer(random.Next(10000, 20000));
@@ -55,33 +64,54 @@ namespace Lesson_9
             aTimer.Enabled = true;
         }
 
-        void TimeManagement()
+        void SetTimerStartStop()
         {
-            SetTimer();
-            Console.ReadLine();
-            aTimer.Stop();
-            aTimer.Dispose();
+            aTimer = new System.Timers.Timer(ProgramTime);
+            aTimer.Elapsed += StartStop;
+            aTimer.AutoReset = false;
+            aTimer.Enabled = true;
+        }
+
+        void StartStop(Object obj, ElapsedEventArgs e)
+        {
+            TimeIsOver();
         }
 
         void OnTimedEvent(Object obj, ElapsedEventArgs e)
         {
-            if (Say(request[random.Next(0, request.Count)]) == DialogResult.OK)
+            int numberRequest;
+            do
             {
+                numberRequest = random.Next(0, request.Count);
+            } while (tmpRequest == request[numberRequest]);
+            tmpRequest = request[numberRequest];
+
+            if (Say(tmpRequest) == DialogResult.OK)
+            {
+                Show();
+                ConsoleCursor();
                 Console.WriteLine($"{e.SignalTime} - OK");
             }
             else
             {
                 countCancel++;
+                Show();
+                ConsoleCursor();
                 Console.WriteLine($"{e.SignalTime} - Cancel");
                 if (countCancel == 3)
                 {
                     if (Say(Treat()) == DialogResult.OK)
                     {
-                        Console.WriteLine($"{e.SignalTime} - OK");
                         countCancel = 0;
+                        Show();
+                        ConsoleCursor();
+                        Console.WriteLine($"{e.SignalTime} - OK");
                     }
                     else
                     {
+                        countCancel++;
+                        Show();
+                        ConsoleCursor();
                         Console.WriteLine($"{e.SignalTime} - {Name} R.I.P");
                         Kick();
                     }
@@ -93,12 +123,62 @@ namespace Lesson_9
         {
             if (Say() == DialogResult.OK)
             {
-                TimeManagement();
+                Show();
+                SetTimer();
+                SetTimerStartStop();
+                Console.ReadLine();
+                aTimer.Stop();
+                aTimer.Dispose();
             }
             else
             {
                 Environment.Exit(0);
             }
+        }
+
+        void Face()
+        {
+            Console.WriteLine("\t    ^^^");
+            Console.WriteLine("\t   @@@@@");
+            Console.WriteLine("\t  @     @");
+            Console.WriteLine("\t$@  O O  @$");
+            Console.WriteLine("\t$@   |   @$");
+            Console.WriteLine("\t @   -   @");
+            Console.WriteLine("\t  @_____@");
+        }
+
+        void ConsoleCursor()
+        {
+            Console.CursorTop = consoleCursorTop++;
+        }
+
+        public void Show()
+        {
+            Console.CursorLeft = 0;
+            Console.CursorTop = 0;
+            switch (countCancel)
+            {
+                case 0:
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case 1:
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    break;
+                case 2:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                case 3:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                case 4:
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    break;
+                default:
+                    break;
+            }
+            Console.BackgroundColor = ConsoleColor.Black;
+            Face();
+            Console.ResetColor();
         }
     }
 }
