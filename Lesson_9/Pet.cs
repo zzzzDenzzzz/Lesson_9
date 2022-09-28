@@ -2,6 +2,7 @@
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using Timer = System.Timers.Timer;
 
 namespace Lesson_9
 {
@@ -10,7 +11,7 @@ namespace Lesson_9
         int countCancel;
         public string Name { get; }
         public int ProgramTime { get; }
-        System.Timers.Timer aTimer;
+        Timer aTimer;
         Random random;
         List<string> request;
         string tmpRequest;
@@ -58,7 +59,7 @@ namespace Lesson_9
 
         void SetTimer()
         {
-            aTimer = new System.Timers.Timer(random.Next(10000, 20000));
+            aTimer = new Timer(random.Next(10000, 20000));
             aTimer.Elapsed += OnTimedEvent;
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
@@ -66,7 +67,7 @@ namespace Lesson_9
 
         void SetTimerStartStop()
         {
-            aTimer = new System.Timers.Timer(ProgramTime);
+            aTimer = new Timer(ProgramTime);
             aTimer.Elapsed += StartStop;
             aTimer.AutoReset = false;
             aTimer.Enabled = true;
